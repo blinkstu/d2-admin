@@ -1,10 +1,10 @@
 import { Message } from 'element-ui'
 import axios from 'axios'
 import Adapter from 'axios-mock-adapter'
-import { get, isEmpty } from 'lodash'
-import qs from 'qs'
+import { get } from 'lodash'
 import util from '@/libs/util'
 import store from '@/store'
+import router from '@/router'
 
 /**
  * @description 记录和显示错误
@@ -34,15 +34,22 @@ function handleError (error) {
 
 /**
  * @description 创建请求实例
+ * @return {}
  */
 function createService () {
-  // 创建一个 axios 实例
-  const service = axios.create()
-  // 请求拦截
+  const service = axios.create({
+    baseURL: 'http://localhost:8000/api'
+  })
+
   service.interceptors.request.use(
-    config => config,
+    config => {
+      const token = localStorage.getItem('token')
+      config.headers = {
+        'Accept-Language': `Token ${token}`
+      }
+      return config
+    },
     error => {
-      // 发送失败
       console.log(error)
       return Promise.reject(error)
     }
@@ -78,22 +85,12 @@ function createService () {
       if (response.data.code === undefined) {
         return response.data
       }
-
-      // 有 code 判断为项目接口请求
-      switch (response.data.code) {
-        // 返回响应内容
-        case 0: return response.data.data
-        // 例如在 code 401 情况下退回到登录页面
-        case 401: throw new Error('请重新登录')
-        // 根据需要添加其它判断
-        default: throw new Error(`${response.data.msg}: ${response.config.url}`)
-      }
     },
     error => {
       const status = get(error, 'response.status')
       switch (status) {
         case 400: error.message = '请求错误'; break
-        case 401: error.message = '未授权，请登录'; break
+        case 401: error.message = '未授权，请登录'; router.push({ name: 'login' }); break
         case 403: error.message = '拒绝访问'; break
         case 404: error.message = `请求地址出错: ${error.response.config.url}`; break
         case 408: error.message = '请求超时'; break
@@ -106,55 +103,14 @@ function createService () {
         default: break
       }
       handleError(error)
-      throw error
+      // throw error
     }
   )
   return service
 }
 
-function stringify (data) {
-  return qs.stringify(data, { allowDots: true, encode: false })
-}
-
-/**
- * @description 创建请求方法
- * @param {Object} service axios 实例
- */
-function createRequest (service) {
-  return function (config) {
-    const token = util.cookies.get('token')
-    const configDefault = {
-      headers: {
-        Authorization: token,
-        'Content-Type': get(config, 'headers.Content-Type', 'application/json')
-      },
-      timeout: 5000,
-      baseURL: process.env.VUE_APP_API,
-      data: {}
-    }
-    const option = Object.assign(configDefault, config)
-    // 处理 get 请求的参数
-    // 请根据实际需要修改
-    if (!isEmpty(option.params)) {
-      option.url = option.url + '?' + stringify(option.params)
-      option.params = {}
-    }
-    // 当需要以 form 形式发送时 处理发送的数据
-    // 请根据实际需要修改
-    if (!isEmpty(option.data) && option.headers['Content-Type'] === 'application/x-www-form-urlencoded') {
-      option.data = stringify(option.data)
-    }
-    return service(option)
-  }
-}
-
-// 用于真实网络请求的实例和请求方法
 export const service = createService()
-export const request = createRequest(service)
-
-// 用于模拟网络请求的实例和请求方法
 export const serviceForMock = createService()
-export const requestForMock = createRequest(serviceForMock)
 
 // 网络请求数据模拟工具
 export const mock = new Adapter(serviceForMock)

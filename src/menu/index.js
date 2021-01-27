@@ -7,6 +7,9 @@ import demoComponents from './modules/demo-components'
 // 功能
 import demoPlayground from './modules/demo-playground'
 
+// 设定
+import Settings from './modules/settings'
+
 /**
  * @description 给菜单数据补充上 path 字段
  * @description https://github.com/d2-projects/d2-admin/issues/209
@@ -24,6 +27,19 @@ function supplementPath (menu) {
 
 // 菜单 侧边栏
 export const menuAside = supplementPath([
+  {
+    path: '/index',
+    title: 'Dashboard',
+    icon: 'home'
+  },
+  {
+    path: '/accounts',
+    title: 'Accounts',
+    icon: 'user',
+    children: [
+      { path: '/accounts/index', title: 'Telegram Accounts', icon: 'telegram' }
+    ]
+  },
   demoComponents,
   demoPlugins,
   demoPlayground
@@ -32,11 +48,12 @@ export const menuAside = supplementPath([
 // 菜单 顶栏
 export const menuHeader = supplementPath([
   {
-    path: '/index',
-    title: '首页',
-    icon: 'home'
-  },
-  demoPlayground,
-  demoComponents,
-  demoPlugins
+    path: '/settings',
+    title: 'Settings',
+    icon: 'cog'
+  }
+  // Settings,
+  // demoPlayground,
+  // demoComponents,
+  // demoPlugins
 ])

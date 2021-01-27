@@ -13,20 +13,18 @@ const _import = require('@/libs/util.import.' + process.env.NODE_ENV)
 const frameIn = [
   {
     path: '/',
-    redirect: { name: 'index' },
     component: layoutHeaderAside,
+    redirect: { name: 'index' },
     children: [
-      // 首页
-      {
-        path: 'index',
-        name: 'index',
-        meta: {
-          title: '首页',
-          auth: true
-        },
-        component: _import('system/index')
-      },
+      { path: 'index', name: 'index', component: _import('settings/home'), meta: { auth: true, title: 'Dashboard' } },
+      { path: 'proxy', name: 'proxy', component: _import('settings/proxy'), meta: { auth: true, title: 'Proxy' } },
       // 系统 前端日志
+      {
+        path: 'settings',
+        name: 'settings',
+        component: _import('settings'),
+        meta: { auth: true, title: 'Settings' }
+      },
       {
         path: 'log',
         name: 'log',
@@ -50,6 +48,16 @@ const frameIn = [
         hidden: true,
         component: _import('system/function/redirect')
       }
+    ]
+  },
+  {
+    path: '/accounts/',
+    name: 'Accounts',
+    meta: { auth: true },
+    redirect: { name: 'accounts-index' },
+    component: layoutHeaderAside,
+    children: [
+      { path: 'index', name: 'accounts-index', component: _import('accounts/telegram_accounts'), meta: { auth: true, title: 'Telegram Accounts' } }
     ]
   },
   playground,

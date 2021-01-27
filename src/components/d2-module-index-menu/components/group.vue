@@ -58,7 +58,7 @@ export default {
     },
     isTitle () {
       // 标题中含有 首页 文字
-      if ((this.menu.title || '').indexOf('首页') > 0) {
+      if ((this.menu.title || '').indexOf('Home') > 0) {
         return true
       }
       // 图标为 home

@@ -1,3 +1,5 @@
+import { service } from '@/api/_service'
+
 export default {
   namespaced: true,
   state: {
@@ -5,6 +7,15 @@ export default {
     info: {}
   },
   actions: {
+    /**
+     *
+     * @param {*} param0
+     * @param {*} info
+     */
+    async info ({ state, dispatch }, info) {
+      const res = await service.get('/user/profile')
+      await dispatch('d2admin/user/set', res, { root: true })
+    },
     /**
      * @description 设置用户数据
      * @param {Object} context

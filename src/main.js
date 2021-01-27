@@ -12,7 +12,12 @@ import router from './router'
 import { menuHeader, menuAside } from '@/menu'
 import { frameInRoutes } from '@/router/routes'
 
+// Vue-antd
+import Antd from 'ant-design-vue'
+import 'ant-design-vue/dist/antd.css'
+
 // 核心插件
+Vue.use(Antd)
 Vue.use(d2Admin)
 
 new Vue({
@@ -25,6 +30,8 @@ new Vue({
     this.$store.commit('d2admin/page/init', frameInRoutes)
     // 设置顶栏菜单
     this.$store.commit('d2admin/menu/headerSet', menuHeader)
+    // 设置边上的菜单
+    this.$store.commit('d2admin/menu/asideSet', menuAside)
     // 初始化菜单搜索功能
     this.$store.commit('d2admin/search/init', menuHeader)
   },
@@ -40,14 +47,14 @@ new Vue({
   },
   watch: {
     // 检测路由变化切换侧边栏内容
-    '$route.matched': {
-      handler (matched) {
-        if (matched.length > 0) {
-          const _side = menuAside.filter(menu => menu.path === matched[0].path)
-          this.$store.commit('d2admin/menu/asideSet', _side.length > 0 ? _side[0].children : [])
-        }
-      },
-      immediate: true
-    }
+    // '$route.matched': {
+    //   handler (matched) {
+    //     if (matched.length > 0) {
+    //       const _side = menuAside.filter(menu => menu.path === matched[0].path)
+    //       this.$store.commit('d2admin/menu/asideSet', _side.length > 0 ? _side[0].children : [])
+    //     }
+    //   },
+    //   immediate: true
+    // }
   }
 }).$mount('#app')

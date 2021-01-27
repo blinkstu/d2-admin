@@ -12,6 +12,7 @@ module.exports = {
       },
       'vant'
     ]
+    // ['import', { libraryName: 'ant-design-vue', libraryDirectory: 'es', style: 'css' }]
   ],
   // common + es6 共存
   sourceType: 'unambiguous'

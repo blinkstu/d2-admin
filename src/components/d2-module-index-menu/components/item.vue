@@ -1,8 +1,10 @@
 <template>
   <el-button
     class="d2-module-index-menu-item"
-    @click="handleMenuSelect(menu.path)">
-    {{menu.title}}
+    @click="handleMenuSelect(menu.path)"
+  >
+    {{ menu.title }}
+    <!-- {{ $t(menu.title) }} -->
   </el-button>
 </template>
 
